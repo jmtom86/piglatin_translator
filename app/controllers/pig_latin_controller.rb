@@ -18,7 +18,9 @@ class PigLatinController < ApplicationController
   		word = pig_latinize(word)
   	end
 
-  	render json: {translated: words.join(" ")}
+  	render json: {
+      translated: words.join(" ")
+    }
   end
 
   private
@@ -38,7 +40,6 @@ class PigLatinController < ApplicationController
 			end
 
 		end
-
 		if VOWELS.include?(word[0])
 			word = word[0..word_index-1] << PL_VOWEL << word[word_index..-1]
   	else
@@ -50,18 +51,15 @@ class PigLatinController < ApplicationController
   		end
 
   		if (word[0] == 'q' || word[0] == 'Q') && (word[1] == 'u' || word[1] == 'U')
-  			word = word[2..word_index-1] << word[0..1] 
+  			word = word[2..word_index-1] << word[0..1] << PL_CONSONANT << word[word_index..-1]
   		else
   			index = 1
 
 	  		while CONSONANTS.include?(word[index])
 	  			index += 1
 	  		end
-
-	  		word = word[index..word_index-1] << word[0..index-1] 
+	  		word = word[index..word_index-1] << word[0..index-1] << PL_CONSONANT << word[word_index..-1]
   		end
-
-  		word = word.concat(PL_CONSONANT, word[word_index..-1])
 
   		if all_upper_case
   			word.upcase!
