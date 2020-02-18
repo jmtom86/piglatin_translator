@@ -4,6 +4,7 @@ require 'action_mailer/railtie'
 require 'active_model/railtie'
 require 'sprockets/railtie'
 require 'rails/test_unit/railtie'
+require "action_cable/engine"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -15,6 +16,8 @@ module PigLatin
     config.load_defaults 6.0
 
     config.api_only = true
+
+    config.autoload_paths += %W(#{config.root}/app/channels)
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
