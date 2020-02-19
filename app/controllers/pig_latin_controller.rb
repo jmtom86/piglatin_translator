@@ -12,15 +12,24 @@ class PigLatinController < ApplicationController
   end
 
   def translate
-  	words = translation_params[:words].split(" ")
+    begin
+      params.fetch(:words)
+    	words = translation_params[:words].split(" ")
 
-  	words.map! do |word| 
-  		word = pig_latinize(word)
-  	end
+    	words.map! do |word| 
+    		word = pig_latinize(word)
+    	end
 
-  	render json: {
-      translated: words.join(" ")
-    }
+    	render json: {
+        words: translation_params[:words],
+        translated: words.join(" ")
+      }
+    rescue ActionController::ParameterMissing
+      render json: {
+        error: "Missing words parameter"
+      },
+      status: 400
+    end
   end
 
   private
@@ -34,12 +43,11 @@ class PigLatinController < ApplicationController
   	end
 
 		word.split("").each do |c|
-
 			if not PUNCTATION.include?(word[c])
 				word_index += 1
 			end
-
 		end
+
 		if VOWELS.include?(word[0])
 			word = word[0..word_index-1] << PL_VOWEL << word[word_index..-1]
   	else
@@ -66,9 +74,7 @@ class PigLatinController < ApplicationController
   		elsif uppercase 
   			word = word[0].upcase << word[1..-1]
   		end
-
   	end
-
   	return word
   end
 
